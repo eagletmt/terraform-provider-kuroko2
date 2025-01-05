@@ -26,8 +26,7 @@ var (
 )
 
 type jobDefinitionResource struct {
-	provider kuroko2Provider
-	client   kuroko2.Client
+	client kuroko2.Client
 }
 
 func NewJobDefinitionResource() resource.Resource {
