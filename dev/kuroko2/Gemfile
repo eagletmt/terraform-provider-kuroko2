@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'kuroko2', git: 'https://github.com/cookpad/kuroko2', ref: 'f41c744bb61b5157f174bfd8f01bf111e5f9ec13'
+
+gem 'bootsnap'
+gem 'mysql2'
+gem 'puma'
+
+# Workaround for https://github.com/oxidize-rb/rb-sys/pull/475
+# Related: https://github.com/gjtorikian/commonmarker/issues/333
+gem 'commonmarker', '2.0.1'
+gem 'selma', '0.4.10'

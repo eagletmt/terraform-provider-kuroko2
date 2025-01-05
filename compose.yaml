@@ -1,0 +1,17 @@
+services:
+  web:
+    build: dev/kuroko2
+    ports:
+      - 127.0.0.1:3000:3000
+    environment:
+      DATABASE_URL: 'mysql2://kuroko2:kuroko2@mysql/kuroko2'
+  mysql:
+    image: mysql:8.0
+    ports:
+      - 127.0.0.1:3306:3306
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_general_ci']
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: kuroko2
+      MYSQL_PASSWORD: kuroko2
+      MYSQL_DATABASE: kuroko2

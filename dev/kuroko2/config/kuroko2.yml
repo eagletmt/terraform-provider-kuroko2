@@ -1,0 +1,13 @@
+default: &default
+  url: 'http://localhost:3000'
+  action_mailer:
+    delivery_method: test
+  app_authentication:
+    google_oauth2:
+      client_id: <%= ENV['GOOGLE_CLIENT_ID'] %>
+      client_secret: <%= ENV['GOOGLE_CLIENT_SECRET'] %>
+  api_basic_authentication_applications:
+    dev: devkey
+
+development:
+  <<: *default
