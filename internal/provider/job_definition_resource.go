@@ -114,8 +114,7 @@ type jobDefinitionResourceModel struct {
 func (r *jobDefinitionResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data jobDefinitionResourceModel
 
-	diags := req.Config.Get(ctx, &data)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -137,14 +136,13 @@ func (r *jobDefinitionResource) Create(ctx context.Context, req resource.CreateR
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	diags = resp.State.Set(ctx, tfmodel)
+	resp.Diagnostics.Append(resp.State.Set(ctx, tfmodel)...)
 }
 
 func (r *jobDefinitionResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data jobDefinitionResourceModel
 
-	diags := req.State.Get(ctx, &data)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -161,15 +159,13 @@ func (r *jobDefinitionResource) Read(ctx context.Context, req resource.ReadReque
 		return
 	}
 
-	diags = resp.State.Set(ctx, tfmodel)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, tfmodel)...)
 }
 
 func (r *jobDefinitionResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data jobDefinitionResourceModel
 
-	diags := req.Plan.Get(ctx, &data)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -186,14 +182,13 @@ func (r *jobDefinitionResource) Update(ctx context.Context, req resource.UpdateR
 		return
 	}
 
-	diags = resp.State.Set(ctx, data)
+	resp.Diagnostics.Append(resp.State.Set(ctx, data)...)
 }
 
 func (r *jobDefinitionResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data jobDefinitionResourceModel
 
-	diags := req.State.Get(ctx, &data)
-	resp.Diagnostics.Append(diags...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -215,14 +210,18 @@ func (r *jobDefinitionResource) ImportState(ctx context.Context, req resource.Im
 }
 
 func encodeJobDefinition(ctx context.Context, definition kuroko2.JobDefinition) (*jobDefinitionResourceModel, diag.Diagnostics) {
-	admins, diags := types.ListValueFrom(ctx, types.Int64Type, definition.Admins)
+	var diags diag.Diagnostics
+
+	admins, ds := types.ListValueFrom(ctx, types.Int64Type, definition.Admins)
+	diags.Append(ds...)
 	if diags.HasError() {
 		return nil, diags
 	}
 
 	cron := types.ListNull(types.StringType)
 	if len(definition.Cron) > 0 {
-		cron, diags = types.ListValueFrom(ctx, types.StringType, definition.Cron)
+		cron, ds = types.ListValueFrom(ctx, types.StringType, definition.Cron)
+		diags.Append(ds...)
 		if diags.HasError() {
 			return nil, diags
 		}
@@ -230,7 +229,8 @@ func encodeJobDefinition(ctx context.Context, definition kuroko2.JobDefinition) 
 
 	tags := types.ListNull(types.StringType)
 	if len(definition.Tags) > 0 {
-		tags, diags = types.ListValueFrom(ctx, types.StringType, definition.Tags)
+		tags, ds = types.ListValueFrom(ctx, types.StringType, definition.Tags)
+		diags.Append(ds...)
 		if diags.HasError() {
 			return nil, diags
 		}
@@ -276,17 +276,17 @@ func decodeJobDefinition(ctx context.Context, data jobDefinitionResourceModel) (
 	}
 	var diags diag.Diagnostics
 
-	diags = data.Admins.ElementsAs(ctx, &model.Admins, false)
+	diags.Append(data.Admins.ElementsAs(ctx, &model.Admins, false)...)
 	if diags.HasError() {
 		return model, diags
 	}
 
-	diags = data.Cron.ElementsAs(ctx, &model.Cron, false)
+	diags.Append(data.Cron.ElementsAs(ctx, &model.Cron, false)...)
 	if diags.HasError() {
 		return model, diags
 	}
 
-	diags = data.Tags.ElementsAs(ctx, &model.Tags, false)
+	diags.Append(data.Tags.ElementsAs(ctx, &model.Tags, false)...)
 	if diags.HasError() {
 		return model, diags
 	}
